@@ -1,9 +1,23 @@
+import os
+import sys
 import subprocess
 import threading
 from flask import Flask, render_template, request, jsonify
 import instaloader
 
-app = Flask(__name__)
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+app = Flask(__name__, 
+            template_folder=resource_path('templates'),
+            static_folder=resource_path('static'))
 current_process = None
 
 @app.route('/')
@@ -27,8 +41,9 @@ def login():
     try:
         if use_browser:
             # Import cookies from Chrome using CLI
+            cmd_cookies = [sys.executable, "-m", "instaloader", "--load-cookies", "chrome"]
             result = subprocess.run(
-                ["instaloader", "--load-cookies", "chrome"], 
+                cmd_cookies, 
                 capture_output=True, text=True
             )
             if result.returncode != 0 and "error" in result.stderr.lower():
@@ -39,8 +54,9 @@ def login():
                 return jsonify({"status": "error", "message": "La contraseña es obligatoria."}), 400
             
             # Using CLI to login
+            cmd_login = [sys.executable, "-m", "instaloader", "--login", username]
             result = subprocess.run(
-                ["instaloader", "--login", username], 
+                cmd_login, 
                 input=password + "\n", 
                 capture_output=True, text=True
             )
@@ -71,7 +87,7 @@ def download():
         return jsonify({"status": "error", "message": "Faltan datos de descarga"}), 400
         
     cmd = [
-        "instaloader",
+        sys.executable, "-m", "instaloader",
         "-q", # Quiet mode to fail instead of asking for password
         "--dirname-pattern", "downloads/{target}",
         "--no-video-thumbnails",
@@ -107,5 +123,9 @@ def stop():
         
     return jsonify({"status": "error", "message": "No hay descargas activas en este momento."})
 
+import webbrowser
+
 if __name__ == '__main__':
-    app.run(port=3017, debug=True)
+    # Abrir el navegador automáticamente después de un pequeño retraso
+    threading.Timer(1.25, lambda: webbrowser.open("http://127.0.0.1:3017")).start()
+    app.run(port=3017, debug=False)
