@@ -7,13 +7,15 @@ Esta guía te ayudará a instalar y usar el programa en tu computadora (Windows 
 ## Opción A: El Método Rápido (Recomendado) 🚀
 Este método es el más sencillo: solo descargas un archivo y lo usas. No requiere instalar nada técnico.
 
-1. Descarga el programa según tu sistema:
-   - **Para Windows (PC):** [Descarga este archivo ZIP](https://github.com/cfarias73/instaloaderplus/raw/master/InstaloaderPlus-windows-latest.zip)
-   - **Para Mac:** (Pronto disponible como descarga directa o usa el método manual abajo).
-2. **Para instalarlo:**
-   - **En Windows:** Descomprime el archivo ZIP y haz doble clic en `InstaloaderPlus.exe`.
-   - **En Mac:** Si descargas el ejecutable, haz clic derecho y elige "Abrir".
-4. Se abrirá una ventana negra y, en unos segundos, se abrirá automáticamente tu navegador con el programa listo para usar.
+1. **Descarga el programa** para tu computadora:
+   - 💻 [Descargar para **Windows** (PC)](https://github.com/cfarias73/instaloaderplus/raw/master/InstaloaderPlus-windows-latest.zip)
+   - 🍎 [Descargar para **Mac**](https://github.com/cfarias73/instaloaderplus/raw/master/InstaloaderPlus-Mac.zip)
+
+2. **Cómo abrirlo:**
+   - **En Windows:** Descomprime el archivo y haz doble clic en `InstaloaderPlus.exe`.
+   - **En Mac:** Descomprime el archivo, haz **clic derecho** sobre `InstaloaderPlus` y elige **"Abrir"**.
+
+3. **¡Listo!** Se abrirá una ventana y luego tu navegador con el programa. No cierres la ventana negra mientras lo uses.
 
 ---
 
