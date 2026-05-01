@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instaloader Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; padding: 10px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: white; cursor: pointer; transition: 0.3s; }
+        .tab-btn.active { background: rgba(138, 43, 226, 0.4); border-color: var(--primary); }
+        .panel { display: none; }
+        .panel.active { display: block; }
+        .btn-danger { background: linear-gradient(135deg, #ff4757, #ff6b81); margin-top: 10px; box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3); }
+        .btn-danger:hover:not(:disabled) { box-shadow: 0 15px 25px rgba(255, 71, 87, 0.4); }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+        .checkbox-group input { width: auto; margin: 0; }
+        .checkbox-group label { margin: 0; font-weight: normal; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="background-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <main class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </div>
+                <h1>Instaloader <span>Pro</span></h1>
+            </div>
+            <p>Descarga contenido de Instagram evitando bloqueos mediante sesión.</p>
+        </header>
+
+        <section class="card glassmorphism">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('login')">1. Conectar Cuenta</button>
+                <button class="tab-btn" onclick="switchTab('download')">2. Descargar</button>
+            </div>
+
+            <!-- LOGIN PANEL -->
+            <div id="panel-login" class="panel active">
+                <form id="login-form">
+                    <div class="input-group">
+                        <label for="login-username">Tu Usuario de Instagram</label>
+                        <input type="text" id="login-username" placeholder="Ej. tu_cuenta" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password">Tu Contraseña (Solo si no usas Chrome)</label>
+                        <input type="password" id="login-password" placeholder="••••••••">
+                    </div>
+
+                    <div class="input-group checkbox-group">
+                        <input type="checkbox" id="use-chrome" checked>
+                        <label for="use-chrome">Extraer sesión abierta de Google Chrome (Recomendado)</label>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Iniciar Sesión</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+                <div id="login-status" class="status-message hidden"></div>
+            </div>
+
+            <!-- DOWNLOAD PANEL -->
+            <div id="panel-download" class="panel">
+                <form id="download-form">
+                    <div class="input-group">
+                        <label for="type">Tipo de Descarga</label>
+                        <div class="custom-select">
+                            <select id="type" name="type">
+                                <option value="profile">Perfil Completo (@usuario)</option>
+                                <option value="post">Publicación Específica (Shortcode)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="target" id="target-label">Usuario Objetivo (El que quieres descargar)</label>
+                        <input type="text" id="target" placeholder="Ej. zuck" autocomplete="off" required>
+                        <small id="target-hint">Descargará las publicaciones públicas de este perfil.</small>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        <span class="btn-text">Iniciar Descarga</span>
+                        <div class="spinner hidden"></div>
+                    </button>
+                </form>
+
+                <button id="stop-btn" class="btn-primary btn-danger hidden">
+                    <span class="btn-text">Detener Descarga</span>
+                </button>
+                
+                <div id="download-status" class="status-message hidden"></div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>Los archivos se guardarán en la carpeta <code>downloads/</code> en tu Escritorio.</p>
+        </footer>
+    </main>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            if(tab === 'login') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('panel-login').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('panel-download').classList.add('active');
+            }
+        }
+
+        // --- Login Logic ---
+        const loginForm = document.getElementById('login-form');
+        const loginStatus = document.getElementById('login-status');
+        const loginBtn = loginForm.querySelector('button[type="submit"]');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value;
+            const useBrowser = document.getElementById('use-chrome').checked;
+
+            loginBtn.disabled = true;
+            loginBtn.querySelector('.btn-text').textContent = 'Conectando...';
+            loginBtn.querySelector('.spinner').classList.remove('hidden');
+            loginStatus.className = 'status-message hidden';
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username, password, use_browser: useBrowser })
+                });
+                const data = await res.json();
+                loginStatus.textContent = data.message;
+                loginStatus.className = 'status-message ' + (res.ok ? 'success' : 'error');
+                
+                if (res.ok) {
+                    setTimeout(() => switchTab('download'), 1500);
+                }
+            } catch (err) {
+                loginStatus.textContent = 'Error de conexión.';
+                loginStatus.className = 'status-message error';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.querySelector('.btn-text').textContent = 'Iniciar Sesión';
+                loginBtn.querySelector('.spinner').classList.add('hidden');
+            }
+        });
+
+        // --- Download Logic ---
+        const downloadForm = document.getElementById('download-form');
+        const typeSelect = document.getElementById('type');
+        const targetInput = document.getElementById('target');
+        const targetLabel = document.getElementById('target-label');
+        const targetHint = document.getElementById('target-hint');
+        const downloadBtn = downloadForm.querySelector('button[type="submit"]');
+        const stopBtn = document.getElementById('stop-btn');
+        const downloadStatus = document.getElementById('download-status');
+
+        typeSelect.addEventListener('change', (e) => {
+            if (e.target.value === 'profile') {
+                targetLabel.textContent = 'Usuario Objetivo';
+                targetInput.placeholder = 'Ej. zuck';
+                targetHint.textContent = 'Descargará las publicaciones públicas de este perfil.';
+            } else {
+                targetLabel.textContent = 'Código de la Publicación (Shortcode)';
+                targetInput.placeholder = 'Ej. Cxyz123abc';
+                targetHint.textContent = 'Ingresa el código de la URL: instagram.com/p/CODIGO/';
+            }
+        });
+
+        downloadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const type = typeSelect.value;
+            let target = targetInput.value.trim();
+            const username = document.getElementById('login-username').value.trim(); // use session
+            
+            if (type === 'profile' && target.includes('instagram.com/')) {
+                const parts = target.split('/');
+                target = parts[parts.length - 1] || parts[parts.length - 2];
+            } else if (type === 'post' && target.includes('instagram.com/p/')) {
+                const url = new URL(target.startsWith('http') ? target : `https://${target}`);
+                const parts = url.pathname.split('/').filter(Boolean);
+                target = parts[1];
+            }
+            
+            downloadBtn.disabled = true;
+            downloadBtn.querySelector('.btn-text').textContent = 'Descargando...';
+            downloadBtn.querySelector('.spinner').classList.remove('hidden');
+            stopBtn.classList.remove('hidden');
+            downloadStatus.className = 'status-message hidden';
+
+            try {
+                const res = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ type, target, username })
+                });
+                const data = await res.json();
+                downloadStatus.textContent = data.message;
+                downloadStatus.className = 'status-message ' + (res.ok ? 'success' : 'error');
+            } catch (err) {
+                downloadStatus.textContent = 'Error de conexión.';
+                downloadStatus.className = 'status-message error';
+            }
+        });
+
+        // --- Stop Logic ---
+        stopBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/stop', { method: 'POST' });
+                const data = await res.json();
+                downloadStatus.textContent = data.message;
+                downloadStatus.className = 'status-message ' + (res.ok ? 'success' : 'error');
+            } catch (err) {
+                downloadStatus.textContent = 'Error al detener.';
+                downloadStatus.className = 'status-message error';
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.querySelector('.btn-text').textContent = 'Iniciar Descarga';
+                downloadBtn.querySelector('.spinner').classList.add('hidden');
+                stopBtn.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
