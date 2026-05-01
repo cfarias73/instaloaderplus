@@ -5,17 +5,16 @@ Esta guía te ayudará a instalar y usar el programa en tu computadora (Windows 
 ---
 
 ## Opción A: El Método Rápido (Recomendado) 🚀
-Este método no requiere instalar Python ni usar la terminal.
+Este método es el más sencillo: solo descargas un archivo y lo usas. No requiere instalar nada técnico.
 
-### En Mac:
-1. Abre la carpeta del proyecto.
-2. Entra en la carpeta llamada **`dist`**.
-3. Busca el archivo llamado **`InstaloaderPlus`** y hazle doble clic.
-   * *Nota: Si Mac te dice que no puede abrirlo por ser de un "desarrollador no identificado", haz clic derecho sobre el archivo y elige "Abrir", luego confirma en el botón "Abrir".*
-4. Se abrirá una ventana negra y, en unos segundos, se abrirá automáticamente tu navegador con el programa listo.
-
-### En Windows:
-*(Para Windows pronto estará disponible un archivo similar terminado en `.exe` en la misma carpeta).*
+1. Ve a la sección de **Releases** (Lanzamientos) de este proyecto: [https://github.com/cfarias73/instaloaderplus/releases](https://github.com/cfarias73/instaloaderplus/releases)
+2. Descarga el archivo según tu sistema:
+   - **Windows:** Descarga el archivo que termina en `.exe`.
+   - **Mac:** Descarga el archivo llamado `InstaloaderPlus` (o el que esté disponible para Mac).
+3. **Para abrirlo:**
+   - **En Windows:** Solo haz doble clic en el `.exe`.
+   - **En Mac:** Haz clic derecho sobre el archivo y elige "Abrir", luego confirma en el botón "Abrir".
+4. Se abrirá una ventana negra y, en unos segundos, se abrirá automáticamente tu navegador con el programa listo para usar.
 
 ---
 
